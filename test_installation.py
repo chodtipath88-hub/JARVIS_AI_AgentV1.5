@@ -2,6 +2,10 @@
 Test script to verify library installation and f-string fixes
 """
 
+import sys
+import ast
+
+
 def test_imports():
     """Test that all required libraries can be imported"""
     print("Testing library imports...")
@@ -27,18 +31,30 @@ def test_desktop_apps():
     """Test that desktop app files have valid syntax"""
     print("\nTesting desktop app syntax...")
     
+    # Test desktop_app_streamlit.py
     try:
-        import desktop_app_streamlit
+        with open('desktop_app_streamlit.py', 'r') as f:
+            code = f.read()
+        ast.parse(code)
         print("✅ desktop_app_streamlit.py has valid syntax")
     except SyntaxError as e:
         print(f"❌ Syntax error in desktop_app_streamlit.py: {e}")
         return False
+    except FileNotFoundError:
+        print("❌ desktop_app_streamlit.py not found")
+        return False
     
+    # Test desktop_app_pyqt5.py
     try:
-        import desktop_app_pyqt5
+        with open('desktop_app_pyqt5.py', 'r') as f:
+            code = f.read()
+        ast.parse(code)
         print("✅ desktop_app_pyqt5.py has valid syntax (no f-string errors)")
     except SyntaxError as e:
         print(f"❌ Syntax error in desktop_app_pyqt5.py: {e}")
+        return False
+    except FileNotFoundError:
+        print("❌ desktop_app_pyqt5.py not found")
         return False
     
     return True
@@ -96,6 +112,5 @@ def main():
 
 
 if __name__ == '__main__':
-    import sys
     success = main()
     sys.exit(0 if success else 1)
